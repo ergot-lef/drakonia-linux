@@ -46,7 +46,8 @@ Each command works on its own (verified); the vendor software waits 16 ms betwee
 | `04 01 40` | announces the button table (64 bytes) on interface 2 | | verified |
 | `05 01 00 06` | announces the macro area (6×256 = 1536 bytes) on interface 2 | | verified |
 | `12 x y` | sensitivity, X and Y axes | `01` (slowest) .. `0A` (factory, full speed); values above `0A` are out of range (`14` made it very slow) | verified |
-| `02 01`, `03 01` | sent first by the vendor software | | unknown, not needed |
+| `02 n` | operating mode | `01` normal; `00` sensor off (no movement, no DPI buttons, clicks still work); `02` all reports off | verified |
+| `03 n` | sent first by the vendor software (`03 01`) | `00`, `01`, `02`: no visible effect | unknown |
 
 `x` is the horizontal axis, `y` the vertical one (verified: `12 01 0A` makes left-right
 movement slow and leaves up-down movement at full speed).
@@ -118,4 +119,7 @@ Delays between macro events: encoding unknown.
 
 `03 01`, `02 01`, `12 0A 0A`, `04 01 40` + button table, `05 01 00 06` + macro area,
 `0A r g b`, `0B mode`, `0C brightness`, `09 dpi`. The polling rate (`01 n`) is sent alone.
-Neither `03 01` nor `02 01` is required.
+Neither `03 01` nor `02 01` is required while the mouse is in normal mode, but sending
+`02 01` first (as the vendor software does) brings a mouse left in another mode back to
+normal. The factory reset of the vendor software sends exactly this sequence, with a red
+logo (`0A FF 00 00`), fast pulse, high brightness and 1500 dpi.

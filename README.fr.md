@@ -46,6 +46,7 @@ python drakonia.py rate 1000             # 125 250 500 1000 Hz
 python drakonia.py sensitivity 5         # 1 (lent) .. 10 (usine) ; 2e valeur facultative pour Y
 python drakonia.py buttons               # liste des boutons et des actions
 python drakonia.py factory               # boutons et macros d'usine
+python drakonia.py rescue                # si le pointeur ne bouge plus : retour au mode normal
 python drakonia.py --dry-run dpi 2000    # affiche les octets, n'envoie rien
 ```
 
@@ -107,7 +108,7 @@ Une fois testé sur la vraie souris, le pilote sera proposé à libratbag.
 
 - relire la configuration enregistrée dans la souris
 - les délais dans les macros
-- le rôle des messages `02 01` et `03 01` (voir `PROTOCOL.md`)
+- le rôle du message `03` (voir `PROTOCOL.md`)
 - la sensibilité n'est pas dans le pilote libratbag (Piper n'a pas ce réglage)
 - vitesse du pointeur, du défilement et du double-clic : ce sont des réglages de Windows/KDE, pas de la souris
 

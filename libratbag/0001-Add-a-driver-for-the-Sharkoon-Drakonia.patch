@@ -1,4 +1,4 @@
-From e62bd15a3e40c2c1e610770afe4e89a3db4d6bf8 Mon Sep 17 00:00:00 2001
+From a9df9a8fbc738bb4ff3c63a8270aafdf6216e2e8 Mon Sep 17 00:00:00 2001
 From: ergot-lef <ergot-lef@users.noreply.github.com>
 Date: Wed, 28 Oct 2026 02:36:36 +0100
 Subject: [PATCH] Add a driver for the Sharkoon Drakonia
@@ -19,11 +19,11 @@ Claude-Session: https://claude.ai/code/session_01HLmtg1vCVFGsWNQa9XB3sJ
 ---
  data/devices/sharkoon-drakonia.device |   5 +
  meson.build                           |   1 +
- src/driver-sharkoon-drakonia.c        | 712 ++++++++++++++++++++++++++
+ src/driver-sharkoon-drakonia.c        | 718 ++++++++++++++++++++++++++
  src/libratbag-data.c                  |   2 +
  src/libratbag-private.h               |   1 +
  src/libratbag.c                       |   1 +
- 6 files changed, 722 insertions(+)
+ 6 files changed, 728 insertions(+)
  create mode 100644 data/devices/sharkoon-drakonia.device
  create mode 100644 src/driver-sharkoon-drakonia.c
 
@@ -52,10 +52,10 @@ index 73771e5..335a66b 100644
  	'src/driver-marsgaming/marsgaming-command.c',
 diff --git a/src/driver-sharkoon-drakonia.c b/src/driver-sharkoon-drakonia.c
 new file mode 100644
-index 0000000..b82b30f
+index 0000000..1122b5d
 --- /dev/null
 +++ b/src/driver-sharkoon-drakonia.c
-@@ -0,0 +1,712 @@
+@@ -0,0 +1,718 @@
 +/*
 + * Copyright © 2026 ergot-lef
 + *
@@ -633,8 +633,8 @@ index 0000000..b82b30f
 +			led->mode = RATBAG_LED_BREATHING;
 +			led->ms = 1000;
 +			led->brightness = 255;
-+			led->color.red = 0x00;
-+			led->color.green = 0xff;
++			led->color.red = 0xff;
++			led->color.green = 0x00;
 +			led->color.blue = 0x00;
 +		}
 +	}
@@ -742,7 +742,13 @@ index 0000000..b82b30f
 +		if (!profile->dirty)
 +			continue;
 +
-+		rc = drakonia_write_profile(device, profile);
++		/* Sent first by the vendor software. 02 01 selects the normal
++		 * mode: 02 00 stops the sensor, 02 02 stops all reports. */
++		rc = drakonia_command(device, 0x03, 0x01);
++		if (rc == 0)
++			rc = drakonia_command(device, 0x02, 0x01);
++		if (rc == 0)
++			rc = drakonia_write_profile(device, profile);
 +		if (rc) {
 +			log_error(device->ratbag, "%s: failed to write the profile: %s\n",
 +				  device->name, strerror(-rc));

@@ -21,6 +21,7 @@ Examples:
   python drakonia.py config "10=keys ctrl+c" "11=keys ctrl+v" "6=text hello"
   python drakonia.py config --file my-mouse.txt
   python drakonia.py factory                  factory buttons and macros
+  python drakonia.py rescue                   back to normal mode if the mouse stopped moving
   python drakonia.py --dry-run color 255 0 0  print the bytes, send nothing
 
 The mouse always receives the whole button table and all macros at once,
@@ -263,7 +264,7 @@ def send_buttons(mouse, table, macros, prefix=False):
     mouse.send_block(macros)
 
 
-def full_sequence(mouse, rgb=(0, 255, 0), mode=4, brightness=4, dpi=3, speed=(10, 10)):
+def full_sequence(mouse, rgb=(255, 0, 0), mode=4, brightness=4, dpi=3, speed=(10, 10)):
     """Replays the whole vendor sequence (also resets buttons and macros)."""
     mouse.send(command(0x03, 0x01))
     mouse.send(command(0x02, 0x01))
@@ -322,12 +323,15 @@ def main():
     sp_ = sp.add_parser("sensitivity", help="sensor sensitivity, 1 (slow) to 10 (factory, full)")
     sp_.add_argument("x", type=int, help="1 to 10, factory 10")
     sp_.add_argument("y", type=int, nargs="?", help="defaults to x")
+    rw = sp.add_parser("raw", help="send any setting message (for research)")
+    rw.add_argument("bytes", nargs="+", help="up to 7 hex bytes, e.g. 03 01")
     sp.add_parser("buttons", help="list buttons and actions")
     cf = sp.add_parser("config", help="send the whole button configuration")
     cf.add_argument("settings", nargs="*", help='e.g. "10=keys ctrl+c" "5=disable"')
     cf.add_argument("--file", help="text file with one 'N = action' line per button")
     cf.add_argument("--azerty", action="store_true", help="French AZERTY keyboard")
     sp.add_parser("factory", help="factory buttons and macros")
+    sp.add_parser("rescue", help="send 03 01 and 02 01 (normal mode) if the mouse stopped working")
     for x in (cf, sp.choices["factory"]):
         x.add_argument("--prefix", action="store_true",
                        help="send 03 01 and 02 01 first, like the vendor software")
@@ -362,8 +366,19 @@ def main():
             if not 1 <= v <= 10:  # out of range above 10 (20 made it very slow)
                 sys.exit("Sensitivity must be between 1 and 10 (factory 10).")
         mouse.send(command(0x12, a.x, y))
+    elif a.cmd == "raw":
+        try:
+            data = bytes(int(x, 16) for x in a.bytes)
+        except ValueError:
+            sys.exit("Give hex bytes, e.g.: raw 03 01")
+        if not 1 <= len(data) <= 7:
+            sys.exit("1 to 7 bytes.")
+        mouse.send(command(*data))
     elif a.cmd == "rate":
         mouse.send(command(0x01, RATE[a.hz]))
+    elif a.cmd == "rescue":
+        mouse.send(command(0x03, 0x01))
+        mouse.send(command(0x02, 0x01))
     elif a.cmd == "factory":
         send_buttons(mouse, FACTORY_BUTTONS, FACTORY_MACROS, prefix=a.prefix)
     elif a.cmd == "config":

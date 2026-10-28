@@ -575,8 +575,8 @@ drakonia_probe(struct ratbag_device *device)
 			led->mode = RATBAG_LED_BREATHING;
 			led->ms = 1000;
 			led->brightness = 255;
-			led->color.red = 0x00;
-			led->color.green = 0xff;
+			led->color.red = 0xff;
+			led->color.green = 0x00;
 			led->color.blue = 0x00;
 		}
 	}
@@ -684,7 +684,13 @@ drakonia_commit(struct ratbag_device *device)
 		if (!profile->dirty)
 			continue;
 
-		rc = drakonia_write_profile(device, profile);
+		/* Sent first by the vendor software. 02 01 selects the normal
+		 * mode: 02 00 stops the sensor, 02 02 stops all reports. */
+		rc = drakonia_command(device, 0x03, 0x01);
+		if (rc == 0)
+			rc = drakonia_command(device, 0x02, 0x01);
+		if (rc == 0)
+			rc = drakonia_write_profile(device, profile);
 		if (rc) {
 			log_error(device->ratbag, "%s: failed to write the profile: %s\n",
 				  device->name, strerror(-rc));
