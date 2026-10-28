@@ -119,7 +119,7 @@ French AZERTY layout.
 
 The software also knows three codes that its menu does not show: `00 F8 00 00`,
 `00 F9 00 00` and `04 00 00 F6`. Assigned to a button, none of them had a visible
-effect under Windows (short or long press).
+effect under Windows.
 
 ### Macro area (1536 bytes)
 
