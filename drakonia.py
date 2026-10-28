@@ -16,6 +16,7 @@ Examples:
   python drakonia.py lighting steady high
   python drakonia.py dpi 2000
   python drakonia.py rate 1000
+  python drakonia.py sensitivity 5            1 = slow ... 10 = factory (full speed)
   python drakonia.py buttons                  list buttons and actions
   python drakonia.py config "10=keys ctrl+c" "11=keys ctrl+v" "6=text hello"
   python drakonia.py config --file my-mouse.txt
@@ -318,6 +319,9 @@ def main():
     d.add_argument("value", type=int, choices=sorted(DPI))
     r = sp.add_parser("rate", help="polling rate")
     r.add_argument("hz", type=int, choices=sorted(RATE))
+    sp_ = sp.add_parser("sensitivity", help="sensor sensitivity, 1 (slow) to 10 (factory, full)")
+    sp_.add_argument("x", type=int, help="1 to 10, factory 10")
+    sp_.add_argument("y", type=int, nargs="?", help="defaults to x")
     sp.add_parser("buttons", help="list buttons and actions")
     cf = sp.add_parser("config", help="send the whole button configuration")
     cf.add_argument("settings", nargs="*", help='e.g. "10=keys ctrl+c" "5=disable"')
@@ -352,6 +356,12 @@ def main():
             mouse.send(command(0x0C, BRIGHTNESS[a.brightness]))
     elif a.cmd == "dpi":
         full_sequence(mouse, dpi=DPI[a.value]) if a.full else mouse.send(command(0x09, DPI[a.value]))
+    elif a.cmd == "sensitivity":
+        y = a.x if a.y is None else a.y
+        for v in (a.x, y):
+            if not 1 <= v <= 10:  # values above 10 make the pointer erratic
+                sys.exit("Sensitivity must be between 1 and 10 (factory 10).")
+        mouse.send(command(0x12, a.x, y))
     elif a.cmd == "rate":
         mouse.send(command(0x01, RATE[a.hz]))
     elif a.cmd == "factory":

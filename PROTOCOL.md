@@ -45,10 +45,13 @@ Each command works on its own (verified); the vendor software waits 16 ms betwee
 | `0C n` | logo brightness | `01` off, `02` low, `03` medium, `04` high | verified |
 | `04 01 40` | announces the button table (64 bytes) on interface 2 | | verified |
 | `05 01 00 06` | announces the macro area (6×256 = 1536 bytes) on interface 2 | | verified |
-| `12 x y` | probably pointer speed X/Y (vendor default `0A 0A`) | | unknown effect |
+| `12 x y` | sensitivity, X and Y axes | `01` (slowest) .. `0A` (factory, full speed); above `0A` the pointer becomes erratic | verified |
 | `02 01`, `03 01` | sent first by the vendor software | | unknown, not needed |
 
-Scroll speed, double-click speed and the vendor "profiles" are handled on the PC side
+The vendor "Sensitivity" slider sends the same value for both axes; "Enable advanced
+sensitivity" sends separate X and Y values.
+
+Mouse speed, scroll speed, double-click speed and the vendor "profiles" are handled on the PC side
 by the vendor software, not by the mouse.
 
 ## Data blocks (interface 2, output report without ID)
@@ -109,4 +112,4 @@ Delays between macro events: encoding unknown.
 
 `03 01`, `02 01`, `12 0A 0A`, `04 01 40` + button table, `05 01 00 06` + macro area,
 `0A r g b`, `0B mode`, `0C brightness`, `09 dpi`. The polling rate (`01 n`) is sent alone.
-None of the first three messages is required.
+Neither `03 01` nor `02 01` is required.

@@ -42,6 +42,7 @@ python drakonia.py color 0 0 255         # blue logo
 python drakonia.py lighting steady high  # steady|slow|medium|fast  off|low|medium|high
 python drakonia.py dpi 2000              # 500 1000 1500 2000 3000 4000 5000
 python drakonia.py rate 1000             # 125 250 500 1000 Hz
+python drakonia.py sensitivity 5         # 1 (slow) .. 10 (factory); optional 2nd value for Y
 python drakonia.py buttons               # list buttons and actions
 python drakonia.py factory               # factory buttons and macros
 python drakonia.py --dry-run dpi 2000    # print the bytes, send nothing
@@ -100,7 +101,9 @@ Once tested on real hardware, the driver will be proposed upstream to libratbag.
 
 - reading the configuration back from the mouse
 - delays inside macros
-- the meaning of the `02 01`, `03 01` and `12 x y` messages (see `PROTOCOL.md`)
+- the meaning of the `02 01` and `03 01` messages (see `PROTOCOL.md`)
+- the sensitivity setting is not in the libratbag driver (Piper has no such setting)
+- mouse speed, scroll speed and double-click speed are Windows/KDE settings, not mouse settings
 
 Reports and captures from other Drakonia owners are welcome.
 
