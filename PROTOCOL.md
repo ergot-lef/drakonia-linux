@@ -45,7 +45,7 @@ Each command works on its own (verified); the vendor software waits 16 ms betwee
 | `0C n` | logo brightness | `01` off, `02` low, `03` medium, `04` high | verified |
 | `04 01 40` | announces the button table (64 bytes) on interface 2 | | verified |
 | `05 01 00 06` | announces the macro area (6×256 = 1536 bytes) on interface 2 | | verified |
-| `12 x y` | sensitivity, X and Y axes | `01` (slowest) .. `0A` (factory, full speed); above `0A` the pointer becomes erratic | verified |
+| `12 x y` | sensitivity, X and Y axes | `01` (slowest) .. `0A` (factory, full speed); values above `0A` are out of range (`14` made it very slow) | verified |
 | `02 01`, `03 01` | sent first by the vendor software | | unknown, not needed |
 
 The vendor "Sensitivity" slider sends the same value for both axes; "Enable advanced

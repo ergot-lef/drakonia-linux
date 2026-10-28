@@ -359,7 +359,7 @@ def main():
     elif a.cmd == "sensitivity":
         y = a.x if a.y is None else a.y
         for v in (a.x, y):
-            if not 1 <= v <= 10:  # values above 10 make the pointer erratic
+            if not 1 <= v <= 10:  # out of range above 10 (20 made it very slow)
                 sys.exit("Sensitivity must be between 1 and 10 (factory 10).")
         mouse.send(command(0x12, a.x, y))
     elif a.cmd == "rate":
