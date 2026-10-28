@@ -1,0 +1,4 @@
+# Lets the logged-in user configure the Sharkoon Drakonia without sudo.
+# Install: sudo cp 99-sharkoon-drakonia.rules /etc/udev/rules.d/
+#          sudo udevadm control --reload && sudo udevadm trigger
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="04d9", ATTRS{idProduct}=="a067", TAG+="uaccess"

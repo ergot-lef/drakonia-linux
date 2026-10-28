@@ -1,0 +1,15 @@
+# Sharkoon Drakonia button layout: one line per button, "N = action".
+# Buttons that are not listed keep their factory action.
+# Send it with:  python drakonia.py config --file examples/my-mouse.txt [--azerty]
+#
+#  1 left click        5 back               9 DPI-
+#  2 right click       6 wheel tilt left   10 right side button
+#  3 wheel click       7 wheel tilt right  11 left side button
+#  4 forward           8 DPI+
+#
+# Actions: left, right, middle, back, forward, tilt-left, tilt-right,
+#          dpi+, dpi-, disable, double-click, color-cycle,
+#          keys ctrl+c   (shortcut)     text hello   (types the text)
+
+10 = keys ctrl+c       # right side button: copy
+11 = keys ctrl+v       # left side button: paste

@@ -1,0 +1,5 @@
+[Device]
+Name=Sharkoon Drakonia
+DeviceMatch=usb:04d9:a067
+DeviceType=mouse
+Driver=sharkoon_drakonia
