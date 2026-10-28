@@ -90,8 +90,35 @@ and assigning macros were verified.
 - `00 00 00 00` disables the button (verified).
 - `53 00 ss ll` runs the macro in slot `ss`; `ll` = 2 × number of events + 2.
   The vendor software always uses slot *button number − 1*.
-- `04 00 00 xx` is probably a consumer key; `E9`/`EA` (volume) appeared in an early
-  capture but were not verified.
+- `04 00 00 xx` sends the USB HID consumer usage `xx` (media keys, see below).
+
+### Every action of the vendor menu
+
+Read from the vendor software (the function that builds the button table), and checked
+against the captures where available.
+
+| Menu | Entry | Notes |
+|---|---|---|
+| Click / Menu / Middle Button | `00 F0` / `00 F1` / `00 F2` `00 00` | |
+| Backward / Forward | `00 F3 00 00` / `00 F4 00 00` | |
+| Double Click | macro: left button pressed and released twice | |
+| Bind Key | `00 uu 00 00` | `uu` = keyboard usage, no macro needed (not tested) |
+| Macro | `53 00 nn ll` | |
+| Disable | `00 00 00 00` | |
+| Advanced › DPI+ / DPI− | `71 01 00 00` / `71 02 00 00` | |
+| Advanced › LED Color Switch | `72 01 00 00` | |
+| Advanced › Scroll Left / Right | `04 00 00 F3` / `04 00 00 F4` | |
+| Advanced › Switch Window, Close Window | macros Alt+Tab, Alt+F4 | |
+| Advanced › Explorer, Run, Show Desktop, Lock | macros Win+E, Win+R, Win+D, Win+L | |
+| Basic › Cut, Copy, Paste, Select All, Find, New, Print, Save | macros Ctrl+X, C, V, A, F, N, P, S | also Ctrl+Z (undo), not shown in the menu |
+| Media › Play/Pause, Stop, Previous, Next | `04 00 00` + `CD`, `B7`, `B6`, `B5` | |
+| Media › Volume Up, Volume Down, Mute | `04 00 00` + `E9`, `EA`, `E2` | volume verified |
+
+The vendor macros use fixed key positions (QWERTY), so its "Select All" sends Ctrl+Q on a
+French AZERTY layout.
+
+The software also knows three codes that its menu does not show: `00 F8 00 00`,
+`00 F9 00 00` and `04 00 00 F6`. Their effect is unknown.
 
 ### Macro area (1536 bytes)
 

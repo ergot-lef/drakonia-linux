@@ -9,6 +9,9 @@
 #
 # Actions: left, right, middle, back, forward, tilt-left, tilt-right,
 #          dpi+, dpi-, disable, double-click, color-cycle,
+#          volume+, volume-, mute, play-pause, stop, next-track, prev-track,
+#          cut, copy, paste, undo, select-all, find, new, print, save,
+#          switch-window, close-window, explorer, run, show-desktop, lock,
 #          keys ctrl+c   (shortcut)     text hello   (types the text)
 
 10 = keys ctrl+c       # right side button: copy

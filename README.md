@@ -70,8 +70,10 @@ python drakonia.py config --file examples/my-mouse.txt
 | 6 | wheel tilt left | | |
 
 Actions: `left`, `right`, `middle`, `back`, `forward`, `tilt-left`, `tilt-right`, `dpi+`,
-`dpi-`, `disable`, `double-click`, `color-cycle`, `keys <shortcut>` (e.g. `keys ctrl+shift+t`),
-`text <text>`.
+`dpi-`, `disable`, `double-click`, `color-cycle`, `volume+`, `volume-`, `mute`, `play-pause`, `stop`,
+`next-track`, `prev-track`, `keys <shortcut>` (e.g. `keys ctrl+shift+t`), `text <text>`, and the shortcuts
+of the vendor menu: `cut`, `copy`, `paste`, `undo`, `select-all`, `find`, `new`, `print`, `save`,
+`switch-window`, `close-window`, `explorer`, `run`, `show-desktop`, `lock`.
 
 Keys are physical positions. On a French AZERTY keyboard, add `--azerty` so that
 `text bonjour` types what you expect.

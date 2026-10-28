@@ -102,6 +102,18 @@ ACTIONS = {
     "disable": "00000000",
     "double-click": "53000a0a",       # factory macro in slot 10
     "color-cycle": "72010000",        # cycles the logo blue -> yellow -> red
+    # media keys: 04 00 00 + USB HID consumer usage (same codes as the vendor menu)
+    "volume+": "040000e9", "volume-": "040000ea", "mute": "040000e2",
+    "play-pause": "040000cd", "stop": "040000b7",
+    "next-track": "040000b5", "prev-track": "040000b6",
+}
+
+# Shortcuts of the vendor "Basic" and "Advanced" menus (sent as macros, like the vendor does)
+SHORTCUTS = {
+    "cut": "ctrl+x", "copy": "ctrl+c", "paste": "ctrl+v", "undo": "ctrl+z",
+    "select-all": "ctrl+a", "find": "ctrl+f", "new": "ctrl+n", "print": "ctrl+p",
+    "save": "ctrl+s", "switch-window": "alt+tab", "close-window": "alt+f4",
+    "explorer": "win+e", "run": "win+r", "show-desktop": "win+d", "lock": "win+l",
 }
 
 # USB HID keyboard usages (physical key positions)
@@ -165,6 +177,8 @@ def build(settings, azerty):
         if not num.isdigit() or not 1 <= int(num) <= 11:
             sys.exit(f"Invalid button number: {num!r} (1 to 11)")
         n = int(num)
+        if action.lower() in SHORTCUTS:
+            action = "keys " + SHORTCUTS[action.lower()]
         word, _, rest = action.partition(" ")
         if word.lower() in ("keys", "text"):
             maker = shortcut_events if word.lower() == "keys" else text_events
@@ -345,6 +359,7 @@ def main():
         for n, name in BUTTON_NAMES.items():
             print(f"  {n:2}  {name}")
         print("\nActions:", ", ".join(ACTIONS))
+        print("Shortcuts:", ", ".join(SHORTCUTS))
         print("         keys ctrl+c   |   text hello")
         return
 

@@ -76,7 +76,13 @@ python drakonia.py config --azerty --file examples/my-mouse.txt
 Actions : `left` (clic gauche), `right` (clic droit), `middle` (clic molette), `back`
 (précédent), `forward` (suivant), `tilt-left`/`tilt-right` (molette inclinée), `dpi+`,
 `dpi-`, `disable` (désactivé), `double-click`, `color-cycle` (couleur suivante),
-`keys <raccourci>` (ex. `keys ctrl+shift+t`), `text <texte>`.
+`volume+`, `volume-`, `mute` (muet), `play-pause`, `stop`, `next-track` (piste suivante),
+`prev-track` (piste précédente), `keys <raccourci>` (ex. `keys ctrl+shift+t`), `text <texte>`.
+
+Raccourcis du menu Sharkoon : `cut` (couper), `copy` (copier), `paste` (coller), `undo`
+(annuler), `select-all` (tout sélectionner), `find` (rechercher), `new` (nouveau), `print`
+(imprimer), `save` (enregistrer), `switch-window` (Alt+Tab), `close-window` (Alt+F4),
+`explorer` (Win+E), `run` (Win+R), `show-desktop` (Win+D), `lock` (Win+L).
 
 Les touches correspondent à des positions sur le clavier. Avec un clavier AZERTY, ajoute
 `--azerty` pour que `text bonjour` tape bien « bonjour ».

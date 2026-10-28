@@ -199,6 +199,46 @@ drakonia_special_code(enum ratbag_button_action_special special, uint8_t code[4]
 	return -EINVAL;
 }
 
+/* Media keys: 04 00 00 + one-byte USB HID consumer usage. */
+static int
+drakonia_consumer_code(unsigned int keycode, uint8_t code[4])
+{
+	uint16_t usage = ratbag_hidraw_get_consumer_usage_from_keycode(NULL, keycode);
+
+	if (usage == 0 || usage > 0xff)
+		return -EINVAL;
+
+	code[0] = 0x04;
+	code[1] = 0x00;
+	code[2] = 0x00;
+	code[3] = (uint8_t)usage;
+	return 0;
+}
+
+/* A macro that only presses and releases one key, delays aside. */
+static bool
+drakonia_macro_single_key(const struct ratbag_macro *macro, unsigned int *keycode)
+{
+	unsigned int n = 0;
+
+	for (size_t i = 0; i < MAX_MACRO_EVENTS; i++) {
+		const struct ratbag_macro_event *ev = &macro->events[i];
+
+		if (ev->type == RATBAG_MACRO_EVENT_NONE ||
+		    ev->type == RATBAG_MACRO_EVENT_INVALID)
+			break;
+		if (ev->type == RATBAG_MACRO_EVENT_WAIT)
+			continue;
+		if (n == 0 && ev->type == RATBAG_MACRO_EVENT_KEY_PRESSED)
+			*keycode = ev->event.key;
+		else if (n != 1 || ev->type != RATBAG_MACRO_EVENT_KEY_RELEASED ||
+			 ev->event.key != *keycode)
+			return false;
+		n++;
+	}
+	return n == 2;
+}
+
 /* Appends one (flag, usage) pair to a macro slot. */
 static int
 drakonia_macro_add(uint8_t *slot, unsigned int *nevents, uint8_t flag, uint8_t usage)
@@ -292,8 +332,13 @@ drakonia_build_config(const struct ratbag_button_action actions[DRAKONIA_NUM_BUT
 			}
 			break;
 		case RATBAG_BUTTON_ACTION_TYPE_KEY: {
-			uint8_t usage = (uint8_t)ratbag_hidraw_get_keyboard_usage_from_keycode(NULL, action->action.key);
+			uint8_t usage;
 
+			/* media keys go through the consumer page, like the vendor software */
+			if (drakonia_consumer_code(action->action.key, code) == 0)
+				break;
+
+			usage = (uint8_t)ratbag_hidraw_get_keyboard_usage_from_keycode(NULL, action->action.key);
 			if (usage == 0) {
 				rc = -EINVAL;
 				break;
@@ -304,14 +349,21 @@ drakonia_build_config(const struct ratbag_button_action actions[DRAKONIA_NUM_BUT
 				rc = drakonia_macro_add(slot, &nevents, DRAKONIA_MACRO_RELEASE, usage);
 			break;
 		}
-		case RATBAG_BUTTON_ACTION_TYPE_MACRO:
+		case RATBAG_BUTTON_ACTION_TYPE_MACRO: {
+			unsigned int keycode = 0;
+
 			if (!action->macro) {
 				rc = -EINVAL;
 				break;
 			}
+			/* a single media key goes through the consumer page */
+			if (drakonia_macro_single_key(action->macro, &keycode) &&
+			    drakonia_consumer_code(keycode, code) == 0)
+				break;
 			is_macro = true;
 			rc = drakonia_macro_from_events(action->macro, slot, &nevents);
 			break;
+		}
 		case RATBAG_BUTTON_ACTION_TYPE_UNKNOWN:
 		default:
 			memcpy(code, raw[i], 4);
