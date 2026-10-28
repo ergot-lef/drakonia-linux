@@ -48,8 +48,14 @@ Each command works on its own (verified); the vendor software waits 16 ms betwee
 | `12 x y` | sensitivity, X and Y axes | `01` (slowest) .. `0A` (factory, full speed); values above `0A` are out of range (`14` made it very slow) | verified |
 | `02 01`, `03 01` | sent first by the vendor software | | unknown, not needed |
 
-The vendor "Sensitivity" slider sends the same value for both axes; "Enable advanced
-sensitivity" sends separate X and Y values.
+`x` is the horizontal axis, `y` the vertical one (verified: `12 01 0A` makes left-right
+movement slow and leaves up-down movement at full speed).
+
+The vendor "Sensitivity" slider sends the same value for both axes. With "Enable advanced
+sensitivity" ticked, the general slider is locked and the two axis values are sent as they
+are, without combining them. Note: the vendor software swaps its labels. With
+"X-Axis" = 3 and "Y-Axis" = 8 it sends `12 08 03`, so its "X-Axis" slider actually
+controls the vertical axis.
 
 Mouse speed, scroll speed, double-click speed and the vendor "profiles" are handled on the PC side
 by the vendor software, not by the mouse.
