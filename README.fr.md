@@ -12,6 +12,12 @@ Windows**. [English version](README.md)
 Tout ce que le logiciel officiel règle dans la souris est pris en charge : couleur, effet
 et intensité du logo, DPI, fréquence, les 11 boutons et les macros.
 
+## Souris compatibles
+
+- Sharkoon Drakonia (`04d9:a067`) : testée.
+- Perixx MX-2000 : même identifiant USB et même matériel d'après le noyau Linux
+  (`hid-holtek-mouse`), elle devrait donc marcher aussi. Non testée ; les retours sont bienvenus.
+
 ## État
 
 | | |

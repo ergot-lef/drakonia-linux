@@ -12,6 +12,12 @@ Configure the **Sharkoon Drakonia** gaming mouse without the vendor software, on
 Everything the official software does with the mouse itself is supported: logo color,
 effect and brightness, DPI, polling rate, the 11 buttons and macros.
 
+## Compatible mice
+
+- Sharkoon Drakonia (`04d9:a067`): tested.
+- Perixx MX-2000: same USB ID and same hardware according to the Linux kernel
+  (`hid-holtek-mouse`), so it should work too. Not tested; reports are welcome.
+
 ## Status
 
 | | |
