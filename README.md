@@ -17,8 +17,8 @@ effect and brightness, DPI, polling rate, the 11 buttons and macros.
 - Sharkoon Drakonia (`04d9:a067`): tested.
 - Perixx MX-2000: same USB ID and same hardware according to the Linux kernel
   (`hid-holtek-mouse`), so it should work too. Not tested; reports are welcome.
-- Tracer Recon: same USB ID, sold as the same mouse according to
-  [sharkoon_drakonia_LED](https://github.com/rossinek/sharkoon_drakonia_LED). Not tested.
+- Tracer Recon: same USB ID, and its vendor software is the same program as Sharkoon's
+  (the DLL that scrambles the messages is byte-for-byte identical). Should work; not tested.
 
 ## Prior work
 

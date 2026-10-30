@@ -119,7 +119,12 @@ French AZERTY layout.
 
 The software also knows three codes that its menu does not show: `00 F8 00 00`,
 `00 F9 00 00` and `04 00 00 F6`. Assigned to a button, none of them had a visible
-effect under Windows.
+effect under Windows. The software's text file also has two labels that its menu never
+shows, "Profile Switch" and "DPI Switch"; they may belong to these codes, which would
+then need the vendor software running to do anything. Unconfirmed.
+
+The Tracer Recon software is the same program (same USB ID, identical `HIDApi.dll`,
+the same button table); only labels and the macro editor size differ.
 
 ### Macro area (1536 bytes)
 
