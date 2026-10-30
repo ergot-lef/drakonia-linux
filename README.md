@@ -17,6 +17,15 @@ effect and brightness, DPI, polling rate, the 11 buttons and macros.
 - Sharkoon Drakonia (`04d9:a067`): tested.
 - Perixx MX-2000: same USB ID and same hardware according to the Linux kernel
   (`hid-holtek-mouse`), so it should work too. Not tested; reports are welcome.
+- Tracer Recon: same USB ID, sold as the same mouse according to
+  [sharkoon_drakonia_LED](https://github.com/rossinek/sharkoon_drakonia_LED). Not tested.
+
+## Prior work
+
+[rossinek/sharkoon_drakonia_LED](https://github.com/rossinek/sharkoon_drakonia_LED) (2016)
+controls the logo by replaying 32 recorded messages (24 colors, 4 effects, 4 brightness levels).
+All of them decode with this project's unscrambler into the `0A`, `0B` and `0C` commands
+described in `PROTOCOL.md`.
 
 ## Status
 
