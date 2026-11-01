@@ -1,4 +1,4 @@
-From 0a9925078597814fc96ec9f3db129a5d00deb39a Mon Sep 17 00:00:00 2001
+From 5ecaa8ab16a4d06d8bad8e667c965e37db6e5cb8 Mon Sep 17 00:00:00 2001
 From: ergot-lef <ergot-lef@users.noreply.github.com>
 Date: Wed, 28 Oct 2026 02:36:36 +0100
 Subject: [PATCH] Add a driver for the Sharkoon Drakonia
@@ -52,7 +52,7 @@ index 73771e5..335a66b 100644
  	'src/driver-marsgaming/marsgaming-command.c',
 diff --git a/src/driver-sharkoon-drakonia.c b/src/driver-sharkoon-drakonia.c
 new file mode 100644
-index 0000000..b3a38cc
+index 0000000..1e4c720
 --- /dev/null
 +++ b/src/driver-sharkoon-drakonia.c
 @@ -0,0 +1,770 @@
@@ -324,7 +324,7 @@ index 0000000..b3a38cc
 +		    ev->type == RATBAG_MACRO_EVENT_INVALID)
 +			break;
 +
-+		/* The delay encoding is unknown, delays are dropped. */
++		/* The device has no delays (the vendor software drops them too). */
 +		if (ev->type == RATBAG_MACRO_EVENT_WAIT)
 +			continue;
 +

@@ -146,7 +146,10 @@ Examples (verified):
 
 Usages are key *positions*: on a French AZERTY layout, usage `04` types "q".
 
-Delays between macro events: encoding unknown.
+Delays between macro events: not supported. The vendor software has a delay field in its
+macro editor, but two captures of the same macro (A then B) with and without a delay are
+byte-for-byte identical: the delay is kept on the PC and never sent to the mouse. In its code,
+each macro event is stored on 3 bytes and only 2 (flag, code) are sent.
 
 ## Sequence of the vendor software ("Apply")
 

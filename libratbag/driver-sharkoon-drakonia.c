@@ -266,7 +266,7 @@ drakonia_macro_from_events(const struct ratbag_macro *macro, uint8_t *slot,
 		    ev->type == RATBAG_MACRO_EVENT_INVALID)
 			break;
 
-		/* The delay encoding is unknown, delays are dropped. */
+		/* The device has no delays (the vendor software drops them too). */
 		if (ev->type == RATBAG_MACRO_EVENT_WAIT)
 			continue;
 

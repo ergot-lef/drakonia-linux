@@ -122,14 +122,13 @@ Puis ouvrir Piper. À savoir :
   d'usine, pas celle enregistrée dans la souris.
 - L'action d'usine du bouton latéral droit (couleur suivante) n'existe pas dans
   libratbag : elle s'affiche comme « inconnue » et reste en place tant qu'on n'y touche pas.
-- Les délais dans les macros sont ignorés (leur codage est inconnu).
+- Les délais dans les macros sont ignorés : la souris n'a pas de réglage de délai (le logiciel Sharkoon ne les envoie pas non plus).
 
 Une fois testé sur la vraie souris, le pilote sera proposé à libratbag.
 
 ## Pas fait / inconnu
 
 - relire la configuration enregistrée dans la souris
-- les délais dans les macros
 - le rôle du message `03` (voir `PROTOCOL.md`)
 - la sensibilité n'est pas dans le pilote libratbag (Piper n'a pas ce réglage)
 - vitesse du pointeur, du défilement et du double-clic : ce sont des réglages de Windows/KDE, pas de la souris

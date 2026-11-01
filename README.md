@@ -111,14 +111,13 @@ Then open Piper. Notes:
   not the one currently stored in the mouse.
 - The right side button's factory action (logo color cycle) has no libratbag
   equivalent and shows as "unknown"; it is kept as long as you don't change it.
-- Delays inside macros are ignored (their encoding is unknown).
+- Delays inside macros are ignored: the mouse has no delay setting (the vendor software does not send them either).
 
 Once tested on real hardware, the driver will be proposed upstream to libratbag.
 
 ## Not done / unknown
 
 - reading the configuration back from the mouse
-- delays inside macros
 - the meaning of the `03` message (see `PROTOCOL.md`)
 - the sensitivity setting is not in the libratbag driver (Piper has no such setting)
 - mouse speed, scroll speed and double-click speed are Windows/KDE settings, not mouse settings
