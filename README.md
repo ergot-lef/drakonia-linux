@@ -92,7 +92,7 @@ Actions: `left`, `right`, `middle`, `back`, `forward`, `tilt-left`, `tilt-right`
 of the vendor menu: `cut`, `copy`, `paste`, `undo`, `select-all`, `find`, `new`, `print`, `save`,
 `switch-window`, `close-window`, `explorer`, `run`, `show-desktop`, `lock`.
 
-Keys are physical positions. On a French AZERTY keyboard, add `--azerty` so that
+Keys are physical positions. On a French AZERTY keyboard, add `--azerty` after `config` (`config --azerty ...`) so that
 `text bonjour` types what you expect.
 
 ## The libratbag driver (Piper)

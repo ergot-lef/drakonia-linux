@@ -103,7 +103,7 @@ Raccourcis du menu Sharkoon : `cut` (couper), `copy` (copier), `paste` (coller),
 `explorer` (Win+E), `run` (Win+R), `show-desktop` (Win+D), `lock` (Win+L).
 
 Les touches correspondent à des positions sur le clavier. Avec un clavier AZERTY, ajoute
-`--azerty` pour que `text bonjour` tape bien « bonjour ».
+`--azerty` juste après `config` (`config --azerty ...`) pour que `text bonjour` tape bien « bonjour ».
 
 ## Le pilote libratbag (Piper)
 
