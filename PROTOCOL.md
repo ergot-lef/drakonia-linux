@@ -148,13 +148,13 @@ Usages are key *positions*: on a French AZERTY layout, usage `04` types "q".
 
 Pauses between macro events (verified): the low 7 bits of a release flag are a pause after
 that event, in steps of 50 ms, up to 127 steps (6.35 s). Captures of the generic "Gaming
-Mouse" software for this mouse, macro A then B with a pause after A:
+Mouse" software for this mouse, two keys with a pause after the first one:
 
 | Pause | Macro |
 |---|---|
 | 50 ms | `00 04 \| 81 04 \| 00 05 \| 80 05` |
-| 100 ms | `00 04 \| 82 04 \| 00 05 \| 80 05` |
-| 1000 ms | `00 04 \| 94 04 \| 00 05 \| 80 05` |
+| 100 ms | `00 14 \| 82 14 \| 00 16 \| 80 16` |
+| 1000 ms | `00 1A \| 94 1A \| 00 1B \| 80 1B` |
 | 50, 100, 150 ms after A, Z, E | `00 04 \| 81 04 \| 00 1D \| 82 1D \| 00 08 \| 83 08` |
 
 The pauses are visible on the device. The Sharkoon software does not use this: it keeps the
