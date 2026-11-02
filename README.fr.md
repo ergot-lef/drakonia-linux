@@ -93,7 +93,9 @@ Actions : `left` (clic gauche), `right` (clic droit), `middle` (clic molette), `
 (précédent), `forward` (suivant), `tilt-left`/`tilt-right` (molette inclinée), `dpi+`,
 `dpi-`, `disable` (désactivé), `double-click`, `color-cycle` (couleur suivante),
 `volume+`, `volume-`, `mute` (muet), `play-pause`, `stop`, `next-track` (piste suivante),
-`prev-track` (piste précédente), `keys <raccourci>` (ex. `keys ctrl+shift+t`), `text <texte>`.
+`prev-track` (piste précédente), `keys <raccourci>` (ex. `keys ctrl+shift+t`), `text <texte>`,
+`macro <touches et pauses>` (ex. `macro a 200ms z 1s e` : pauses en ms ou en s, par pas de
+50 ms, 6,35 s au plus entre deux touches).
 
 Raccourcis du menu Sharkoon : `cut` (couper), `copy` (copier), `paste` (coller), `undo`
 (annuler), `select-all` (tout sélectionner), `find` (rechercher), `new` (nouveau), `print`
@@ -122,7 +124,9 @@ Puis ouvrir Piper. À savoir :
   d'usine, pas celle enregistrée dans la souris.
 - L'action d'usine du bouton latéral droit (couleur suivante) n'existe pas dans
   libratbag : elle s'affiche comme « inconnue » et reste en place tant qu'on n'y touche pas.
-- Les délais dans les macros sont ignorés : la souris n'a pas de réglage de délai (le logiciel Sharkoon ne les envoie pas non plus).
+- Les pauses dans les macros sont conservées, arrondies à 50 ms (6,35 s au plus). Une pause
+  placée juste après l'appui d'une touche est déplacée après son relâchement, seul endroit où
+  la souris la respecte.
 
 Une fois testé sur la vraie souris, le pilote sera proposé à libratbag.
 

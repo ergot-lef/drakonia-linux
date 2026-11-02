@@ -134,7 +134,7 @@ the same button table); only labels and the macro editor size differ.
 |---|---|
 | +0 | `00` |
 | +1 | `01` |
-| +2… | pairs `(flag, code)`: flag `00` = press, `80` = release |
+| +2… | pairs `(flag, code)`: flag `00` = press, `80` = release, `80 + n` = release then pause n × 50 ms |
 
 `code` is a USB HID keyboard usage (`04` = A position, `E0` = left Ctrl…) or `F0` for the
 left mouse button (used by the factory double click). Up to 47 events per slot.
@@ -146,10 +146,21 @@ Examples (verified):
 
 Usages are key *positions*: on a French AZERTY layout, usage `04` types "q".
 
-Delays between macro events: not supported. The vendor software has a delay field in its
-macro editor, but two captures of the same macro (A then B) with and without a delay are
-byte-for-byte identical: the delay is kept on the PC and never sent to the mouse. In its code,
-each macro event is stored on 3 bytes and only 2 (flag, code) are sent.
+Pauses between macro events (verified): the low 7 bits of a release flag are a pause after
+that event, in steps of 50 ms, up to 127 steps (6.35 s). Captures of the generic "Gaming
+Mouse" software for this mouse, macro A then B with a pause after A:
+
+| Pause | Macro |
+|---|---|
+| 50 ms | `00 04 \| 81 04 \| 00 05 \| 80 05` |
+| 100 ms | `00 04 \| 82 04 \| 00 05 \| 80 05` |
+| 1000 ms | `00 04 \| 94 04 \| 00 05 \| 80 05` |
+| 50, 100, 150 ms after A, Z, E | `00 04 \| 81 04 \| 00 1D \| 82 1D \| 00 08 \| 83 08` |
+
+The pauses are visible on the device. The Sharkoon software does not use this: it keeps the
+delays of its macro editor on the PC and always sends `80` (two captures of the same macro
+with and without a delay are byte-for-byte identical). Pauses on a press flag (`00 + n`) were
+not seen and are not used by the tools here.
 
 ## Sequence of the vendor software ("Apply")
 

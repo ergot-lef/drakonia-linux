@@ -41,6 +41,17 @@ def test_disable_matches_capture():
     assert table[36:40] == bytes(4)
 
 
+def test_macro_delays_match_captures():
+    # "Gaming Mouse" vendor software, macro A then B with a pause: the pause sits in the
+    # release flag of A, 0x80 | (ms / 50). Captures of 50, 100 and 1000 ms.
+    for ms, flag in ((50, 0x81), (100, 0x82), (1000, 0x94)):
+        assert d.macro_events(f"a {ms}ms b", False) == [(0x00, 0x04), (flag, 0x04), (0x00, 0x05), (0x80, 0x05)]
+    # three pauses of 50, 100 and 150 ms (capture: 81 04, 82 1d, 83 08)
+    assert d.macro_events("a 50ms z 100ms e 150ms", False) == [
+        (0x00, 0x04), (0x81, 0x04), (0x00, 0x1D), (0x82, 0x1D), (0x00, 0x08), (0x83, 0x08)]
+    assert d.macro_events("ctrl+c 1s", False)[-1] == (0x80 | 20, 0xE0)
+
+
 if __name__ == "__main__":
     for name, fn in list(globals().items()):
         if name.startswith("test_"):

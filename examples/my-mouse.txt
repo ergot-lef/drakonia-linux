@@ -13,6 +13,7 @@
 #          cut, copy, paste, undo, select-all, find, new, print, save,
 #          switch-window, close-window, explorer, run, show-desktop, lock,
 #          keys ctrl+c   (shortcut)     text hello   (types the text)
+#          macro a 200ms z 1s e   (keys and pauses, steps of 50 ms, 6.35 s max)
 
 10 = keys ctrl+c       # right side button: copy
 11 = keys ctrl+v       # left side button: paste

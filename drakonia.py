@@ -19,6 +19,7 @@ Examples:
   python drakonia.py sensitivity 5            1 = slow ... 10 = factory (full speed)
   python drakonia.py buttons                  list buttons and actions
   python drakonia.py config "10=keys ctrl+c" "11=keys ctrl+v" "6=text hello"
+  python drakonia.py config "11=macro a 200ms z 1s e"     keys with pauses
   python drakonia.py config --file my-mouse.txt
   python drakonia.py factory                  factory buttons and macros
   python drakonia.py rescue                   back to normal mode if the mouse stopped moving
@@ -159,10 +160,44 @@ def text_events(text, azerty):
     return events
 
 
+DELAY_STEP_MS = 50          # the release flag carries a pause: 0x80 | (ms / 50), up to 127 steps
+DELAY_MAX_STEPS = 0x7F
+
+
+def parse_ms(token):
+    t = token.lower()
+    if t.endswith("ms") and t[:-2].isdigit():
+        return int(t[:-2])
+    if t.endswith("s") and t[:-1].replace(".", "", 1).isdigit():
+        return int(float(t[:-1]) * 1000)
+    return None
+
+
+def macro_events(text, azerty):
+    """'a 200ms z e' or 'ctrl+c 1s ctrl+v': keys and shortcuts separated by spaces, with
+    pauses (ms or s). A pause is stored in the release flag of the event before it
+    (verified on the device), in steps of 50 ms, at most 127 steps (6.35 s)."""
+    events = []
+    for token in text.split():
+        ms = parse_ms(token)
+        if ms is None:
+            events += shortcut_events(token, azerty)
+            continue
+        if not events:
+            sys.exit("A macro cannot start with a pause.")
+        flag, usage = events[-1]
+        steps = (flag & DELAY_MAX_STEPS) + round(ms / DELAY_STEP_MS)
+        if steps > DELAY_MAX_STEPS:
+            sys.exit(f"Pause too long after {token!r}: {DELAY_MAX_STEPS * DELAY_STEP_MS} ms max between two keys.")
+        events[-1] = (0x80 | steps, usage)
+    return events
+
+
 def build(settings, azerty):
     """Whole configuration from 'N = action' lines.
 
-    action: a name from ACTIONS, 8 hex digits, 'keys ctrl+c' or 'text hello'.
+    action: a name from ACTIONS, 8 hex digits, 'keys ctrl+c', 'text hello' or
+    'macro a 200ms z e'.
     Buttons that are not named keep their factory action.
     The macro of button N always goes to macro slot N-1.
     """
@@ -180,8 +215,8 @@ def build(settings, azerty):
         if action.lower() in SHORTCUTS:
             action = "keys " + SHORTCUTS[action.lower()]
         word, _, rest = action.partition(" ")
-        if word.lower() in ("keys", "text"):
-            maker = shortcut_events if word.lower() == "keys" else text_events
+        if word.lower() in ("keys", "text", "macro"):
+            maker = {"keys": shortcut_events, "text": text_events, "macro": macro_events}[word.lower()]
             events = maker(rest.strip(), azerty)
             if len(events) > MACRO_MAX_EVENTS:
                 sys.exit(f"Macro too long on button {n} ({MACRO_MAX_EVENTS} events max).")
@@ -195,7 +230,7 @@ def build(settings, azerty):
                 entry = bytes.fromhex(code)
                 assert len(entry) == 4
             except (ValueError, AssertionError):
-                sys.exit(f"Unknown action: {action!r}. Choices: {', '.join(ACTIONS)}, keys ..., text ...")
+                sys.exit(f"Unknown action: {action!r}. Choices: {', '.join(ACTIONS)}, keys ..., text ..., macro ...")
             print(f"  button {n:2} ({BUTTON_NAMES[n]}): {action}")
         table[(n - 1) * 4:n * 4] = entry
     return bytes(table), bytes(macros)
@@ -360,7 +395,7 @@ def main():
             print(f"  {n:2}  {name}")
         print("\nActions:", ", ".join(ACTIONS))
         print("Shortcuts:", ", ".join(SHORTCUTS))
-        print("         keys ctrl+c   |   text hello")
+        print("         keys ctrl+c   |   text hello   |   macro a 200ms z e")
         return
 
     mouse = Mouse(a.dry_run)

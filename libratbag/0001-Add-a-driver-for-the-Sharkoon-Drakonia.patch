@@ -1,4 +1,4 @@
-From 5ecaa8ab16a4d06d8bad8e667c965e37db6e5cb8 Mon Sep 17 00:00:00 2001
+From 919a0c7ee0e09f63863b1a7da046adaf8353a1bb Mon Sep 17 00:00:00 2001
 From: ergot-lef <ergot-lef@users.noreply.github.com>
 Date: Wed, 28 Oct 2026 02:36:36 +0100
 Subject: [PATCH] Add a driver for the Sharkoon Drakonia
@@ -19,11 +19,11 @@ Claude-Session: https://claude.ai/code/session_01HLmtg1vCVFGsWNQa9XB3sJ
 ---
  data/devices/sharkoon-drakonia.device |   5 +
  meson.build                           |   1 +
- src/driver-sharkoon-drakonia.c        | 770 ++++++++++++++++++++++++++
+ src/driver-sharkoon-drakonia.c        | 798 ++++++++++++++++++++++++++
  src/libratbag-data.c                  |   2 +
  src/libratbag-private.h               |   1 +
  src/libratbag.c                       |   1 +
- 6 files changed, 780 insertions(+)
+ 6 files changed, 808 insertions(+)
  create mode 100644 data/devices/sharkoon-drakonia.device
  create mode 100644 src/driver-sharkoon-drakonia.c
 
@@ -52,10 +52,10 @@ index 73771e5..335a66b 100644
  	'src/driver-marsgaming/marsgaming-command.c',
 diff --git a/src/driver-sharkoon-drakonia.c b/src/driver-sharkoon-drakonia.c
 new file mode 100644
-index 0000000..1e4c720
+index 0000000..1a0bb59
 --- /dev/null
 +++ b/src/driver-sharkoon-drakonia.c
-@@ -0,0 +1,770 @@
+@@ -0,0 +1,798 @@
 +/*
 + * Copyright © 2026 ergot-lef
 + *
@@ -129,6 +129,9 @@ index 0000000..1e4c720
 +
 +#define DRAKONIA_MACRO_PRESS		0x00
 +#define DRAKONIA_MACRO_RELEASE		0x80
++/* A pause after an event: low 7 bits of its release flag, in steps of 50 ms. */
++#define DRAKONIA_MACRO_DELAY_STEP_MS	50
++#define DRAKONIA_MACRO_DELAY_MAX_STEPS	0x7f
 +/* inside a macro, 0xf0 is the left mouse button */
 +#define DRAKONIA_MACRO_LEFT_BUTTON	0xf0
 +
@@ -310,10 +313,17 @@ index 0000000..1e4c720
 +	return 0;
 +}
 +
++/*
++ * Pauses are stored in the release flag of the event before them:
++ * 0x80 | (ms / 50), at most 127 steps. A pause that follows a press (or
++ * starts the macro) is carried to the next release, the only place where
++ * the device is known to honour it.
++ */
 +static int
 +drakonia_macro_from_events(const struct ratbag_macro *macro, uint8_t *slot,
 +			   unsigned int *nevents)
 +{
++	unsigned int pending_ms = 0;
 +	int rc;
 +
 +	for (size_t i = 0; i < MAX_MACRO_EVENTS; i++) {
@@ -324,18 +334,36 @@ index 0000000..1e4c720
 +		    ev->type == RATBAG_MACRO_EVENT_INVALID)
 +			break;
 +
-+		/* The device has no delays (the vendor software drops them too). */
-+		if (ev->type == RATBAG_MACRO_EVENT_WAIT)
++		if (ev->type == RATBAG_MACRO_EVENT_WAIT) {
++			pending_ms += ev->event.timeout;
++			if (*nevents > 0 && (slot[2 * *nevents] & DRAKONIA_MACRO_RELEASE)) {
++				uint8_t *flag = &slot[2 * *nevents];
++				unsigned int steps = (*flag & DRAKONIA_MACRO_DELAY_MAX_STEPS) +
++					(pending_ms + DRAKONIA_MACRO_DELAY_STEP_MS / 2) /
++					DRAKONIA_MACRO_DELAY_STEP_MS;
++
++				*flag = DRAKONIA_MACRO_RELEASE |
++					min(steps, (unsigned int)DRAKONIA_MACRO_DELAY_MAX_STEPS);
++				pending_ms = 0;
++			}
 +			continue;
++		}
 +
 +		usage = (uint8_t)ratbag_hidraw_get_keyboard_usage_from_keycode(NULL, ev->event.key);
 +		if (usage == 0)
 +			return -EINVAL;
 +
-+		rc = drakonia_macro_add(slot, nevents,
-+					ev->type == RATBAG_MACRO_EVENT_KEY_PRESSED ?
-+					DRAKONIA_MACRO_PRESS : DRAKONIA_MACRO_RELEASE,
-+					usage);
++		if (ev->type == RATBAG_MACRO_EVENT_KEY_PRESSED) {
++			rc = drakonia_macro_add(slot, nevents, DRAKONIA_MACRO_PRESS, usage);
++		} else {
++			unsigned int steps = (pending_ms + DRAKONIA_MACRO_DELAY_STEP_MS / 2) /
++					     DRAKONIA_MACRO_DELAY_STEP_MS;
++
++			rc = drakonia_macro_add(slot, nevents, DRAKONIA_MACRO_RELEASE |
++						min(steps, (unsigned int)DRAKONIA_MACRO_DELAY_MAX_STEPS),
++						usage);
++			pending_ms = 0;
++		}
 +		if (rc)
 +			return rc;
 +	}

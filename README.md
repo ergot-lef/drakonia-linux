@@ -86,7 +86,9 @@ python drakonia.py config --file examples/my-mouse.txt
 
 Actions: `left`, `right`, `middle`, `back`, `forward`, `tilt-left`, `tilt-right`, `dpi+`,
 `dpi-`, `disable`, `double-click`, `color-cycle`, `volume+`, `volume-`, `mute`, `play-pause`, `stop`,
-`next-track`, `prev-track`, `keys <shortcut>` (e.g. `keys ctrl+shift+t`), `text <text>`, and the shortcuts
+`next-track`, `prev-track`, `keys <shortcut>` (e.g. `keys ctrl+shift+t`), `text <text>`,
+`macro <keys and pauses>` (e.g. `macro a 200ms z 1s e`: pauses in ms or s, steps of 50 ms,
+6.35 s at most between two keys), and the shortcuts
 of the vendor menu: `cut`, `copy`, `paste`, `undo`, `select-all`, `find`, `new`, `print`, `save`,
 `switch-window`, `close-window`, `explorer`, `run`, `show-desktop`, `lock`.
 
@@ -111,7 +113,8 @@ Then open Piper. Notes:
   not the one currently stored in the mouse.
 - The right side button's factory action (logo color cycle) has no libratbag
   equivalent and shows as "unknown"; it is kept as long as you don't change it.
-- Delays inside macros are ignored: the mouse has no delay setting (the vendor software does not send them either).
+- Pauses inside macros are kept, rounded to 50 ms (6.35 s at most). A pause right after a
+  key press is moved after the key's release, the only place where the mouse honours it.
 
 Once tested on real hardware, the driver will be proposed upstream to libratbag.
 

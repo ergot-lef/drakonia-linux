@@ -71,6 +71,9 @@
 
 #define DRAKONIA_MACRO_PRESS		0x00
 #define DRAKONIA_MACRO_RELEASE		0x80
+/* A pause after an event: low 7 bits of its release flag, in steps of 50 ms. */
+#define DRAKONIA_MACRO_DELAY_STEP_MS	50
+#define DRAKONIA_MACRO_DELAY_MAX_STEPS	0x7f
 /* inside a macro, 0xf0 is the left mouse button */
 #define DRAKONIA_MACRO_LEFT_BUTTON	0xf0
 
@@ -252,10 +255,17 @@ drakonia_macro_add(uint8_t *slot, unsigned int *nevents, uint8_t flag, uint8_t u
 	return 0;
 }
 
+/*
+ * Pauses are stored in the release flag of the event before them:
+ * 0x80 | (ms / 50), at most 127 steps. A pause that follows a press (or
+ * starts the macro) is carried to the next release, the only place where
+ * the device is known to honour it.
+ */
 static int
 drakonia_macro_from_events(const struct ratbag_macro *macro, uint8_t *slot,
 			   unsigned int *nevents)
 {
+	unsigned int pending_ms = 0;
 	int rc;
 
 	for (size_t i = 0; i < MAX_MACRO_EVENTS; i++) {
@@ -266,18 +276,36 @@ drakonia_macro_from_events(const struct ratbag_macro *macro, uint8_t *slot,
 		    ev->type == RATBAG_MACRO_EVENT_INVALID)
 			break;
 
-		/* The device has no delays (the vendor software drops them too). */
-		if (ev->type == RATBAG_MACRO_EVENT_WAIT)
+		if (ev->type == RATBAG_MACRO_EVENT_WAIT) {
+			pending_ms += ev->event.timeout;
+			if (*nevents > 0 && (slot[2 * *nevents] & DRAKONIA_MACRO_RELEASE)) {
+				uint8_t *flag = &slot[2 * *nevents];
+				unsigned int steps = (*flag & DRAKONIA_MACRO_DELAY_MAX_STEPS) +
+					(pending_ms + DRAKONIA_MACRO_DELAY_STEP_MS / 2) /
+					DRAKONIA_MACRO_DELAY_STEP_MS;
+
+				*flag = DRAKONIA_MACRO_RELEASE |
+					min(steps, (unsigned int)DRAKONIA_MACRO_DELAY_MAX_STEPS);
+				pending_ms = 0;
+			}
 			continue;
+		}
 
 		usage = (uint8_t)ratbag_hidraw_get_keyboard_usage_from_keycode(NULL, ev->event.key);
 		if (usage == 0)
 			return -EINVAL;
 
-		rc = drakonia_macro_add(slot, nevents,
-					ev->type == RATBAG_MACRO_EVENT_KEY_PRESSED ?
-					DRAKONIA_MACRO_PRESS : DRAKONIA_MACRO_RELEASE,
-					usage);
+		if (ev->type == RATBAG_MACRO_EVENT_KEY_PRESSED) {
+			rc = drakonia_macro_add(slot, nevents, DRAKONIA_MACRO_PRESS, usage);
+		} else {
+			unsigned int steps = (pending_ms + DRAKONIA_MACRO_DELAY_STEP_MS / 2) /
+					     DRAKONIA_MACRO_DELAY_STEP_MS;
+
+			rc = drakonia_macro_add(slot, nevents, DRAKONIA_MACRO_RELEASE |
+						min(steps, (unsigned int)DRAKONIA_MACRO_DELAY_MAX_STEPS),
+						usage);
+			pending_ms = 0;
+		}
 		if (rc)
 			return rc;
 	}
