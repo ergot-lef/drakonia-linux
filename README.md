@@ -31,8 +31,8 @@ described in `PROTOCOL.md`.
 
 | | |
 |---|---|
-| `drakonia.py` | tested on a real mouse (under Windows) |
-| libratbag driver | builds, produces the same bytes as the tested script, **not yet tested on a real mouse** |
+| `drakonia.py` | tested on a real mouse (Windows and Linux) |
+| libratbag driver | tested on a real mouse with `ratbagctl` (CachyOS, libratbag 0.18): DPI, buttons, logo color, effect and off. Piper itself not tried yet |
 
 ## The command-line tool
 

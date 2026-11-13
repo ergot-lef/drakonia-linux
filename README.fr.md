@@ -32,8 +32,8 @@ Tous se décodent avec notre algorithme en commandes `0A`, `0B` et `0C`, décrit
 
 | | |
 |---|---|
-| `drakonia.py` | testé sur une vraie souris (sous Windows) |
-| pilote libratbag | compile, produit les mêmes octets que le script testé, **pas encore testé sur la souris** |
+| `drakonia.py` | testé sur une vraie souris (Windows et Linux) |
+| pilote libratbag | testé sur une vraie souris avec `ratbagctl` (CachyOS, libratbag 0.18) : DPI, boutons, couleur, effet et extinction du logo. Pas encore essayé dans Piper |
 
 ## L'outil en ligne de commande
 
