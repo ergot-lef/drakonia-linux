@@ -655,8 +655,8 @@ drakonia_probe(struct ratbag_device *device)
 			led->mode = RATBAG_LED_BREATHING;
 			led->ms = 1000;
 			led->brightness = 255;
-			led->color.red = 0xff;
-			led->color.green = 0x00;
+			led->color.red = 0x00;
+			led->color.green = 0xff;
 			led->color.blue = 0x00;
 		}
 	}
@@ -731,8 +731,9 @@ drakonia_write_profile(struct ratbag_device *device, struct ratbag_profile *prof
 			continue;
 
 		drakonia_encode_led(led, &mode, &brightness);
+		/* the mouse takes green first, then red */
 		rc = drakonia_command(device, DRAKONIA_CMD_COLOR,
-				      led->color.red, led->color.green, led->color.blue);
+				      led->color.green, led->color.red, led->color.blue);
 		if (rc == 0)
 			rc = drakonia_command(device, DRAKONIA_CMD_LED_MODE, mode);
 		if (rc == 0)

@@ -52,6 +52,13 @@ def test_macro_delays_match_captures():
     assert d.macro_events("ctrl+c 1s", False)[-1] == (0x80 | 20, 0xE0)
 
 
+def test_color_byte_order():
+    # checked on the device: the mouse takes green first, then red
+    assert d.color_command(255, 0, 0) == d.command(0x0A, 0, 255, 0)
+    assert d.color_command(0, 255, 0) == d.command(0x0A, 255, 0, 0)
+    assert d.color_command(0, 0, 255) == d.command(0x0A, 0, 0, 255)
+
+
 if __name__ == "__main__":
     for name, fn in list(globals().items()):
         if name.startswith("test_"):

@@ -313,13 +313,18 @@ def send_buttons(mouse, table, macros, prefix=False):
     mouse.send_block(macros)
 
 
-def full_sequence(mouse, rgb=(255, 0, 0), mode=4, brightness=4, dpi=3, speed=(10, 10)):
+def color_command(r, g, b):
+    """Logo color. The mouse takes green first, then red (checked on the device)."""
+    return command(0x0A, g, r, b)
+
+
+def full_sequence(mouse, rgb=(0, 255, 0), mode=4, brightness=4, dpi=3, speed=(10, 10)):
     """Replays the whole vendor sequence (also resets buttons and macros)."""
     mouse.send(command(0x03, 0x01))
     mouse.send(command(0x02, 0x01))
     mouse.send(command(0x12, *speed))
     send_buttons(mouse, FACTORY_BUTTONS, FACTORY_MACROS)
-    mouse.send(command(0x0A, *rgb))
+    mouse.send(color_command(*rgb))
     mouse.send(command(0x0B, mode))
     mouse.send(command(0x0C, brightness))
     mouse.send(command(0x09, dpi))
@@ -401,7 +406,7 @@ def main():
     mouse = Mouse(a.dry_run)
     if a.cmd == "color":
         rgb = tuple(max(0, min(255, v)) for v in (a.red, a.green, a.blue))
-        full_sequence(mouse, rgb=rgb) if a.full else mouse.send(command(0x0A, *rgb))
+        full_sequence(mouse, rgb=rgb) if a.full else mouse.send(color_command(*rgb))
     elif a.cmd == "lighting":
         if a.full:
             full_sequence(mouse, mode=MODE[a.mode], brightness=BRIGHTNESS[a.brightness])

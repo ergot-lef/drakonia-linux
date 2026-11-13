@@ -40,7 +40,7 @@ Each command works on its own (verified); the vendor software waits 16 ms betwee
 |---|---|---|---|
 | `01 n` | polling interval in ms | `08`=125 Hz, `04`=250, `02`=500, `01`=1000 | verified |
 | `09 n` | DPI step | `01`..`07` = 500, 1000, 1500, 2000, 3000, 4000, 5000 | verified |
-| `0A r g b` | logo color | RGB, 0–255 each | verified |
+| `0A g r b` | logo color | **green first, then red**, then blue, 0–255 each | verified |
 | `0B n` | logo effect | `01` steady, `02` slow pulse, `03` medium pulse, `04` fast pulse | verified |
 | `0C n` | logo brightness | `01` off, `02` low, `03` medium, `04` high | verified |
 | `04 01 40` | announces the button table (64 bytes) on interface 2 | | verified |
@@ -165,8 +165,16 @@ not seen and are not used by the tools here.
 ## Sequence of the vendor software ("Apply")
 
 `03 01`, `02 01`, `12 0A 0A`, `04 01 40` + button table, `05 01 00 06` + macro area,
-`0A r g b`, `0B mode`, `0C brightness`, `09 dpi`. The polling rate (`01 n`) is sent alone.
+`0A g r b`, `0B mode`, `0C brightness`, `09 dpi`. The polling rate (`01 n`) is sent alone.
 Neither `03 01` nor `02 01` is required while the mouse is in normal mode, but sending
 `02 01` first (as the vendor software does) brings a mouse left in another mode back to
-normal. The factory reset of the vendor software sends exactly this sequence, with a red
-logo (`0A FF 00 00`), fast pulse, high brightness and 1500 dpi.
+normal. The factory reset of the vendor software sends exactly this sequence, with
+`0A FF 00 00` for the logo (green, see below), fast pulse, high brightness and 1500 dpi.
+
+## Logo color byte order
+
+The color command is `0A g r b`, not `0A r g b`: checked on the device on 13 November 2026
+(`0A FF 00 00` lights the logo green, `0A 00 FF 00` red, `0A 00 00 FF` blue; magenta sent as
+red + blue showed cyan with the old order). The first captures only had red and blue values
+that were never checked against the logo, so the swap went unnoticed. `drakonia.py` and the
+libratbag driver take ordinary RGB values and send them in the mouse's order.

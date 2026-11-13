@@ -1,4 +1,4 @@
-From 919a0c7ee0e09f63863b1a7da046adaf8353a1bb Mon Sep 17 00:00:00 2001
+From 6a376a833a5a6dc98d7b5b4e91a1f00f56328f18 Mon Sep 17 00:00:00 2001
 From: ergot-lef <ergot-lef@users.noreply.github.com>
 Date: Wed, 28 Oct 2026 02:36:36 +0100
 Subject: [PATCH] Add a driver for the Sharkoon Drakonia
@@ -19,11 +19,11 @@ Claude-Session: https://claude.ai/code/session_01HLmtg1vCVFGsWNQa9XB3sJ
 ---
  data/devices/sharkoon-drakonia.device |   5 +
  meson.build                           |   1 +
- src/driver-sharkoon-drakonia.c        | 798 ++++++++++++++++++++++++++
+ src/driver-sharkoon-drakonia.c        | 799 ++++++++++++++++++++++++++
  src/libratbag-data.c                  |   2 +
  src/libratbag-private.h               |   1 +
  src/libratbag.c                       |   1 +
- 6 files changed, 808 insertions(+)
+ 6 files changed, 809 insertions(+)
  create mode 100644 data/devices/sharkoon-drakonia.device
  create mode 100644 src/driver-sharkoon-drakonia.c
 
@@ -52,10 +52,10 @@ index 73771e5..335a66b 100644
  	'src/driver-marsgaming/marsgaming-command.c',
 diff --git a/src/driver-sharkoon-drakonia.c b/src/driver-sharkoon-drakonia.c
 new file mode 100644
-index 0000000..1a0bb59
+index 0000000..07bbd96
 --- /dev/null
 +++ b/src/driver-sharkoon-drakonia.c
-@@ -0,0 +1,798 @@
+@@ -0,0 +1,799 @@
 +/*
 + * Copyright © 2026 ergot-lef
 + *
@@ -713,8 +713,8 @@ index 0000000..1a0bb59
 +			led->mode = RATBAG_LED_BREATHING;
 +			led->ms = 1000;
 +			led->brightness = 255;
-+			led->color.red = 0xff;
-+			led->color.green = 0x00;
++			led->color.red = 0x00;
++			led->color.green = 0xff;
 +			led->color.blue = 0x00;
 +		}
 +	}
@@ -789,8 +789,9 @@ index 0000000..1a0bb59
 +			continue;
 +
 +		drakonia_encode_led(led, &mode, &brightness);
++		/* the mouse takes green first, then red */
 +		rc = drakonia_command(device, DRAKONIA_CMD_COLOR,
-+				      led->color.red, led->color.green, led->color.blue);
++				      led->color.green, led->color.red, led->color.blue);
 +		if (rc == 0)
 +			rc = drakonia_command(device, DRAKONIA_CMD_LED_MODE, mode);
 +		if (rc == 0)
@@ -899,5 +900,5 @@ index 2248f2f..7469538 100644
  	ratbag_register_driver(ratbag, &roccat_emp_driver);
  	ratbag_register_driver(ratbag, &gskill_driver);
 -- 
-2.43.0
+2.56.1
 
